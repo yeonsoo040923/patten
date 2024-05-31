@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Flower Pattern</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="flowerCanvas" width="600" height="600"></canvas>
+    <script>
+        function drawFlower(ctx, x, y, petalCount, petalLength, petalWidth) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            for (let i = 0; i < petalCount; i++) {
+                ctx.rotate((Math.PI * 2) / petalCount);
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(petalWidth / 2, -petalLength / 2, 0, -petalLength);
+                ctx.quadraticCurveTo(-petalWidth / 2, -petalLength / 2, 0, 0);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255, 105, 180, 0.8)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 20, 147, 0.9)';
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        function drawPattern() {
+            const canvas = document.getElementById('flowerCanvas');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const petalCount = 8;
+            const basePetalLength = 50;
+            const basePetalWidth = 20;
+            let time = 0;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const scaleFactor = 1.5 + Math.sin(time) * 0.5; // 크기 변화를 위한 스케일 팩터
+
+                // 패턴의 시작 위치 조정
+                const patternOffsetX = 100 * Math.floor((canvas.width / 2) / 100);
+                const patternOffsetY = 100 * Math.floor((canvas.height / 2) / 100);
+
+                for (let y = -patternOffsetY; y < canvas.height + patternOffsetY; y += 100) {
+                    for (let x = -patternOffsetX; x < canvas.width + patternOffsetX; x += 100) {
+                        drawFlower(ctx, centerX + x, centerY + y, petalCount, basePetalLength * scaleFactor, basePetalWidth * scaleFactor);
+                    }
+                }
+
+                time += 0.05; // 애니메이션 속도 조절
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        window.onload = function() {
+            drawPattern();
+        };
+    </script>
+</body>
